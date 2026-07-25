@@ -708,6 +708,9 @@ body.has-cursor .cursor { display: grid; place-items: center; }
 }
 
 @media (max-width: 720px) {
+  /* A 1900px perspective on a 375px screen is almost orthographic — the ring
+     reads as a flat row. Pulling the camera in restores the depth. */
+  .stage { perspective: 1100px; }
   .stage.is-grid .stage__3d { grid-template-columns: repeat(2, 1fr); }
   .toolgrid { grid-template-columns: repeat(2, 1fr); }
   .lb__btn--prev { left: .35rem; }

@@ -145,6 +145,13 @@
     radius = n > 2 ? (w * 1.16) / 2 / Math.tan(Math.PI / n) : w * 0.9;
     radius = Math.max(radius, w * 0.9);
 
+    // Fourteen non-overlapping cards want a ~560px ring, which is wider than a
+    // phone. Rather than let the side cards run off the edge, squeeze the ring
+    // to fit: the cards then overlap into a fan, which still reads correctly
+    // because only the front two ever play anyway.
+    const fits = (window.innerWidth * 0.46) / Math.sin(Math.min(FACING_DEG, 80) * (Math.PI / 180));
+    radius = Math.min(radius, Math.max(fits, w * 0.9));
+
     list.forEach((card, i) => {
       const angle = i * step;
       card.style.setProperty('--a', `${angle}deg`);
@@ -180,12 +187,20 @@
     if (!force && now - lastFacing < 220) return;
     lastFacing = now;
 
+    // Collect the near arc, then play only as many as the governor will hold.
+    // Asking for six on a phone that allows two makes the governor evict and
+    // restart videos on every pass — the ring stutters and the network fills
+    // with aborted range requests. Nearest-to-front wins.
+    const near = [];
     for (const card of cards) {
       if (card.hidden) { stopCard(card); continue; }
       const d = Math.abs(norm(rotation + Number(card.dataset.angle || 0)));
-      if (d < FACING_DEG) playCard(card);
+      if (d < FACING_DEG) near.push({ card, d });
       else stopCard(card);
     }
+
+    near.sort((a, b) => a.d - b.d);
+    near.forEach(({ card }, i) => (i < DS.governor.max ? playCard(card) : stopCard(card)));
   }
 
   /* ── Ticker ─────────────────────────────────────────────────────────────── */
@@ -233,25 +248,34 @@
       lockAxis: true,
       cursor: 'grab',
       activeCursor: 'grabbing',
+      minimumMovement: 4,
       onPress() {
         if (DS.state.view !== 'cylinder') return;
-        dragging = true;
         startRot = rotation;
+        // Deliberately NOT setting dragging here. A click fires immediately
+        // after pointerup, before any rAF we could use to clear the flag, so
+        // flagging on press swallows every plain click on a card. Only actual
+        // movement counts as a drag.
+        dragging = false;
       },
       onDrag() {
         if (DS.state.view !== 'cylinder') return;
+        dragging = true;
         rotation = startRot + this.x * DRAG_DEG_PER_PX;
         render();
         updateFacing();
       },
       onThrowUpdate() {
+        if (DS.state.view !== 'cylinder') return;
+        dragging = true;
         rotation = startRot + this.x * DRAG_DEG_PER_PX;
         render();
         updateFacing();
       },
       onRelease() {
-        // Let the click handler see dragging=true for one frame, then clear.
-        requestAnimationFrame(() => { dragging = false; });
+        // Keep the flag up just long enough for the click that follows a real
+        // drag to be ignored, then release it.
+        if (dragging) requestAnimationFrame(() => { dragging = false; });
       },
       onThrowComplete() { dragging = false; },
     });
@@ -296,12 +320,27 @@
         stagger: { amount: 0.35, from: 'center' },
         onComplete: () => {
           if (view === 'cylinder' && onScreen) startSpin();
+          settle();
         },
       });
     }
     // On first setup we deliberately don't start: the stage is far below the
     // fold, and spinning it there would decode six videos nobody can see while
     // the hero is trying to play its own.
+  }
+
+  /**
+   * Re-measure every ScrollTrigger after the stage changes shape.
+   *
+   * Grid and cylinder are wildly different heights — on a phone the grid is
+   * seven rows tall and the ring is one card. Everything below the stage keeps
+   * the scroll positions it was built with, so the Tools and Process reveals
+   * (gsap.from opacity:0, once:true) never reach their trigger and stay
+   * invisible forever. Refreshing recomputes them against the new page height.
+   */
+  function settle() {
+    if (!HAS_GSAP || typeof ScrollTrigger === 'undefined') return;
+    ScrollTrigger.refresh();
   }
 
   /* ── Grid playback on touch ─────────────────────────────────────────────── */
@@ -347,6 +386,7 @@
       duration: 0.7,
       ease: 'power3.inOut',
       stagger: { amount: 0.2, from: 'center' },
+      onComplete: settle,   // filtering changes grid height too
       onEnter: (els) => gsap.fromTo(els, { opacity: 0 }, { opacity: 1, duration: 0.4 }),
       onLeave: (els) => gsap.to(els, { opacity: 0, duration: 0.25 }),
     });

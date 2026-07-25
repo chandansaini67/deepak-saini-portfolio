@@ -285,7 +285,54 @@
     });
   })();
 
-  /* ── Section reveals ────────────────────────────────────────────────────── */
+  /* ── Section reveals ──────────────────────────────────────────────────────
+     Every reveal is a gsap.from(): the element is put in its hidden state at
+     creation and only returns to normal when its ScrollTrigger fires. That
+     makes a missed trigger catastrophic rather than cosmetic — the section
+     stays invisible for good.
+
+     It happens for real. Toggling the work stage between the ring and the grid
+     changes the page height by around 2000px on a phone, and every trigger
+     below it keeps the offsets it was built with. Measured: the Tools reveal
+     still thought it began at scroll 3527 when the section had moved to 1917.
+
+     So: refresh after any layout change (reelwall.js calls settle()), and keep
+     the list below as a floor under it. Nothing on this page is allowed to end
+     up permanently invisible because an offset drifted. */
+
+  const reveals = [];
+  let lastGuard = -1e9;
+
+  function reveal(targets, vars, trigger) {
+    const tw = gsap.from(targets, { ...vars, scrollTrigger: { ...trigger, once: true } });
+    reveals.push(tw);
+    return tw;
+  }
+
+  /** Force-finish any reveal that is on screen but still hasn't played. */
+  function ensureRevealed() {
+    const fold = window.innerHeight * 1.05;
+    for (let i = reveals.length - 1; i >= 0; i--) {
+      const tw = reveals[i];
+      if (tw.progress() > 0) { reveals.splice(i, 1); continue; }
+
+      const el = tw.targets()[0];
+      if (!el || !el.isConnected) { reveals.splice(i, 1); continue; }
+
+      if (el.getBoundingClientRect().top < fold) {
+        if (tw.scrollTrigger) tw.scrollTrigger.kill();
+        tw.progress(1);
+        reveals.splice(i, 1);
+      }
+    }
+  }
+
+  // Direct, not via rAF: ScrollTrigger.refresh() has already forced layout by
+  // the time this fires, and progress(1) applies synchronously — so the guard
+  // still rescues content in a backgrounded tab where rAF is suspended.
+  ScrollTrigger.addEventListener('refresh', ensureRevealed);
+
+  DS.ensureRevealed = ensureRevealed;   // handy when debugging a stuck section
 
   if (!DS.reduced) {
     qa('.section__head').forEach((head) => {
@@ -294,31 +341,32 @@
         SplitText.create(h2, {
           type: 'lines', mask: 'lines', aria: 'auto', autoSplit: true,
           onSplit(self) {
-            return gsap.from(self.lines, {
+            // Masked lines sit at yPercent 115 inside a clip, so a missed
+            // trigger hides these too — they belong in the registry as well.
+            const tw = gsap.from(self.lines, {
               yPercent: 115, duration: 0.85, ease: 'power4.out', stagger: 0.07,
               scrollTrigger: { trigger: head, start: 'top 80%', once: true },
             });
+            reveals.push(tw);
+            return tw;
           },
         });
       }
       const lede = q('.lede', head);
       if (lede) {
-        gsap.from(lede, {
-          y: 20, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.12,
-          scrollTrigger: { trigger: head, start: 'top 80%', once: true },
-        });
+        reveal(lede,
+          { y: 20, opacity: 0, duration: 0.7, ease: 'power3.out', delay: 0.12 },
+          { trigger: head, start: 'top 80%' });
       }
     });
 
-    gsap.from('.step', {
-      y: 34, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06,
-      scrollTrigger: { trigger: '.steps', start: 'top 82%', once: true },
-    });
+    reveal('.step',
+      { y: 34, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.06 },
+      { trigger: '.steps', start: 'top 82%' });
 
-    gsap.from('.work__controls', {
-      y: 18, opacity: 0, duration: 0.6, ease: 'power3.out',
-      scrollTrigger: { trigger: '.work__controls', start: 'top 88%', once: true },
-    });
+    reveal('.work__controls',
+      { y: 18, opacity: 0, duration: 0.6, ease: 'power3.out' },
+      { trigger: '.work__controls', start: 'top 88%' });
   }
 
   /* Eyebrows burn in like a slate. */
@@ -342,16 +390,18 @@
     if (!tiles.length) return;
 
     if (!DS.reduced) {
-      gsap.from(tiles, {
-        y: 40, opacity: 0, rotateY: -28, duration: 0.7, ease: 'power3.out', stagger: 0.05,
-        scrollTrigger: { trigger: '#toolgrid', start: 'top 82%', once: true },
-      });
+      // This is the one the bug report named: "industry standard ... stops
+      // working". Registered, so it can't stay hidden.
+      reveal(tiles,
+        { y: 40, opacity: 0, rotateY: -28, duration: 0.7, ease: 'power3.out', stagger: 0.05 },
+        { trigger: '#toolgrid', start: 'top 82%' });
 
       // Each tile breathes on its own offset so the grid never pulses in unison.
+      // Delayed past the reveal so the two don't both own y at once.
       tiles.forEach((t, i) => {
         gsap.to(t, {
           y: -6, duration: 3 + (i % 4) * 0.55, ease: 'sine.inOut',
-          repeat: -1, yoyo: true, delay: i * 0.22,
+          repeat: -1, yoyo: true, delay: 1.2 + i * 0.22,
         });
       });
     }
@@ -457,6 +507,12 @@
         } else {
           gsap.set(head, { x: p * (box.width - 8), y: 0 });
         }
+        // Piggy-back the reveal guard on the one trigger that already runs on
+        // every scroll. A refresh fixes offsets at the moment it happens; this
+        // catches anything that drifts afterwards. Throttled — it's a cheap
+        // rect read, but not 60 times a second.
+        const now = self.scroll();
+        if (Math.abs(now - lastGuard) > 240) { lastGuard = now; ensureRevealed(); }
       },
     });
 

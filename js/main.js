@@ -63,15 +63,14 @@ window.DS = (function () {
   const emit = (name, data) => (listeners[name] || []).forEach((fn) => fn(data));
 
   /* ── Filter state ───────────────────────────────────────────────────────── */
-  // Grid unless there's genuinely room to spin a ring. Keyed on width as well
-  // as touch, because a narrow desktop window is just as cramped as a phone and
-  // would otherwise get a cylinder squeezed into 375px. Set once at load, not
-  // on resize — yanking the layout out from under someone mid-scroll is worse
-  // than a slightly tight ring, and the toggle is right there.
-  const roomForCylinder = window.innerWidth >= 900;
+  // The reel wall is the point of the page, so every screen opens on it —
+  // phones and narrow windows included. What small screens don't get is the
+  // budget to go with it: governor.max stays at 2 on touch, and reelwall.js
+  // caps the ring's radius to the viewport so it can't spill off the sides.
+  // Reduced motion is the one case that still opens flat.
   const state = {
     filter: 'all',
-    view: reduced || touch || !roomForCylinder ? 'grid' : 'cylinder',
+    view: reduced ? 'grid' : 'cylinder',
   };
   const matches = (w) => state.filter === 'all' || w.category === state.filter;
   const visible = () => works.filter(matches);
@@ -133,7 +132,7 @@ window.DS = (function () {
     if (hint) {
       hint.textContent =
         state.view === 'cylinder'
-          ? 'Drag to spin · click a reel to watch'
+          ? (touch ? 'Swipe to spin · tap a reel to watch' : 'Drag to spin · click a reel to watch')
           : 'Click a reel to watch with sound';
     }
   }
