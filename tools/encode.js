@@ -203,11 +203,16 @@ function encodeOne(video) {
 
   if (FORCE || !usable(out.poster)) {
     if (typeof video.posterAt === 'number') {
-      // Hand-picked: seconds into the preview, for the clips where no automatic
-      // rule finds a good frame (a shot that pans throughout, say).
+      // Hand-picked, in SOURCE seconds — deliberately not restricted to the
+      // preview window, because the best thumbnail is often the title card or
+      // hook right at the top of the clip, which the loop skips past. The
+      // poster then isn't the loop's first frame, but the video cross-fades in
+      // over 350ms so the join doesn't read as a jump.
       run(FFMPEG, [
-        '-y', '-ss', String(video.posterAt), '-i', out.preview,
-        '-frames:v', '1', '-q:v', '4', out.poster,
+        '-y', '-ss', String(video.posterAt), '-i', src,
+        '-frames:v', '1',
+        '-vf', `scale=${size.preview}:-2:flags=lanczos`,
+        '-q:v', '4', out.poster,
       ]);
     } else {
       pickPoster(out.preview, out.poster, previewLen);
