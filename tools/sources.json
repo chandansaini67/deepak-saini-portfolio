@@ -1,0 +1,136 @@
+{
+  "_comment": "The 14 source videos, resolved from the two shared Google Drive folders owned by nikchhora@gmail.com. 'slug' becomes the filename for every derivative in media/. Re-run tools/fetch-drive.js then tools/encode.js after adding entries here.",
+  "_overrides": "Optional per-video: 'startAt' (seconds into the SOURCE where the 6s preview loop begins, overriding the automatic 18% rule) and 'posterAt' (seconds into the PREVIEW to grab the poster from, overriding the automatic sharpest-frame pick). Delete the affected file from media/preview or media/poster, then re-run encode.js.",
+  "folders": {
+    "real-estate": "https://drive.google.com/drive/folders/1AW0sxX2TArz8yGVsBlDku26bcXsXCW0x",
+    "food-cafe": "https://drive.google.com/drive/folders/1j5iFbplWC3xp5DHOQJIztDJlENFIjhzS"
+  },
+  "videos": [
+    {
+      "slug": "digibeez",
+      "id": "1JCJ1nTvgLKHjnXNkSJwAzsaKckl1o1Ui",
+      "source": "digibeez.in-20260723-0001.mp4",
+      "bytes": 10188996,
+      "category": "real-estate",
+      "client": "digibeez.in",
+      "title": "Digibeez"
+    },
+    {
+      "slug": "karly-closedit",
+      "id": "1lJU0W2VmOkI4i3b_uJeAAgxvEIiHxPvO",
+      "source": "karly.closedit-20260723-0001.mp4",
+      "bytes": 13661222,
+      "category": "real-estate",
+      "client": "karly.closedit",
+      "title": "Karly Closed It"
+    },
+    {
+      "slug": "reddoormedia",
+      "id": "1HGH_2q5QXvS58QInWLNPTNv1ZNXbxZrq",
+      "source": "reddoormedia.co-20260723-0001.mp4",
+      "bytes": null,
+      "category": "real-estate",
+      "client": "reddoormedia.co",
+      "title": "Red Door Media"
+    },
+    {
+      "slug": "estate-01",
+      "id": "1htqdcv607A8RQv80SjZ5Ur01E_hQVBvC",
+      "source": "Real e state 1.mp4",
+      "bytes": 79856904,
+      "category": "real-estate",
+      "client": null,
+      "title": "Property Feature 01"
+    },
+    {
+      "slug": "estate-02",
+      "id": "1vHW4nR8zKH-0KcszcMQLsYahHNVSGN-T",
+      "source": "Real e state 2.mp4",
+      "bytes": null,
+      "category": "real-estate",
+      "client": null,
+      "title": "Property Feature 02"
+    },
+    {
+      "slug": "estate-03",
+      "id": "1uJKB_s_9_xYjzyR4chNW3Ocaux5Lk3Xl",
+      "source": "Real estate 3.mp4",
+      "bytes": null,
+      "category": "real-estate",
+      "client": null,
+      "title": "Property Feature 03"
+    },
+    {
+      "slug": "estate-04",
+      "id": "18bTrq9EDwSAg3zWDLBzP8rpV2DSSm4_5",
+      "source": "Real e state 4.mp4",
+      "bytes": null,
+      "category": "real-estate",
+      "client": null,
+      "title": "Property Feature 04"
+    },
+    {
+      "slug": "estate-05",
+      "id": "1vpVTSaUrbW8tv51h1cn53A8Cbh3RCN5w",
+      "source": "Real e state 5",
+      "bytes": 217377338,
+      "category": "real-estate",
+      "client": null,
+      "title": "Property Feature 05"
+    },
+    {
+      "slug": "cafe-01",
+      "id": "1Frpp15IUYorDTH0KLcoiHcji6sczXY4u",
+      "source": "Food and cafee 1.mp4",
+      "bytes": null,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 01"
+    },
+    {
+      "slug": "cafe-02",
+      "id": "11JFCEgU3H2qboekZwBlzK5O6raUYWUG4",
+      "source": "Food and cafe 2.mp4",
+      "bytes": 1836805,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 02"
+    },
+    {
+      "slug": "cafe-03",
+      "id": "12q-KqA8yC2vkpNUBYCJUad7oKd8VHuyx",
+      "source": "Food and cafe 3.mp4",
+      "bytes": 1448670,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 03"
+    },
+    {
+      "slug": "cafe-04",
+      "id": "1gMSOLeSnVxv4hKqahCxwL4UwUxH5-DCV",
+      "source": "Food and cafe 4.mp4",
+      "bytes": null,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 04"
+    },
+    {
+      "slug": "cafe-05",
+      "id": "1FIk3m7r60bn3RxqTO7G9OF8p39O7usNe",
+      "source": "Food and cafe 5.mp4",
+      "bytes": null,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 05"
+    },
+    {
+      "slug": "cafe-06",
+      "id": "1yQfxcdn9w_IxK9yvU5n-7PNf4yslaiFd",
+      "source": "Food and cafe 6.mp4",
+      "bytes": null,
+      "category": "food-cafe",
+      "client": null,
+      "title": "Food & Cafe 06"
+    }
+  ]
+}

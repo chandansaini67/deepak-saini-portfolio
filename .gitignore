@@ -1,0 +1,7 @@
+# Original Drive downloads — 640MB of masters. The site ships only the
+# compressed derivatives in media/preview, media/full and media/poster.
+# Re-fetch any time with: node tools/fetch-drive.js
+media/src/
+
+node_modules/
+tools/*.log

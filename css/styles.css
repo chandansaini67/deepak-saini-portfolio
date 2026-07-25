@@ -1,0 +1,742 @@
+/* ══════════════════════════════════════════════════════════════════════════
+   Deepak Saini — video editor portfolio
+   Dark editing-suite theme. Warm orange + teal is the classic commercial
+   colour grade, which is the point: the palette is the discipline.
+   ══════════════════════════════════════════════════════════════════════════ */
+
+:root {
+  --bg:          #0A0A0C;
+  --surface:     #131317;
+  --surface-2:   #1B1B21;
+  --border:      rgba(255, 255, 255, .08);
+  --border-lit:  rgba(255, 255, 255, .16);
+  --text:        #F2F2F5;   /* 18:1 on --bg  */
+  --muted:       #9C9CA8;   /* 7.6:1         */
+  --accent:      #FF7A2F;   /* 7.5:1         */
+  --cool:        #35C8D8;   /* 9.8:1         */
+  --on-accent:   #14100C;   /* 7.2:1 on accent */
+
+  --f-display: 'Archivo', system-ui, sans-serif;
+  --f-body:    'Inter', system-ui, sans-serif;
+  --f-mono:    'JetBrains Mono', ui-monospace, monospace;
+
+  --gut: clamp(1.25rem, 4vw, 4rem);
+  --maxw: 1400px;
+  --radius: 14px;
+
+  --e-out: cubic-bezier(.22, 1, .36, 1);
+  --e-io:  cubic-bezier(.65, 0, .35, 1);
+
+  --z-page: 1;
+  --z-chrome: 40;
+  --z-cursor: 90;
+  --z-lb: 100;
+  --z-cold: 120;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; overflow-x: hidden; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 400 16px/1.6 var(--f-body);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+/* Custom cursor replaces the native one, but only where we actually draw it. */
+body.has-cursor,
+body.has-cursor a,
+body.has-cursor button { cursor: none; }
+
+img, svg, video { display: block; max-width: 100%; }
+button { font: inherit; color: inherit; background: none; border: 0; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+}
+
+.skip {
+  position: fixed; top: -100px; left: var(--gut);
+  z-index: var(--z-cold);
+  display: inline-flex; align-items: center; min-height: 44px;
+  padding: .75rem 1.25rem; border-radius: 8px;
+  background: var(--accent); color: var(--on-accent);
+  font: 500 14px var(--f-body); text-decoration: none;
+  transition: top .2s var(--e-out);
+}
+.skip:focus { top: 1rem; }
+
+.noscript {
+  padding: 2rem var(--gut); text-align: center;
+  background: var(--surface); border-top: 1px solid var(--border);
+}
+.noscript a { color: var(--accent); }
+
+/* ── Ambient layers ─────────────────────────────────────────────────────── */
+
+/* Film grain. The texture is oversized and moved with transform only, so it
+   never triggers a repaint — a background-position animation would.
+   It has to be a clipped wrapper + oversized child rather than one oversized
+   fixed element: the latter extends documentElement.scrollWidth even though
+   nothing can scroll to it, which shows up as phantom horizontal overflow. */
+.grain {
+  position: fixed; inset: 0;
+  z-index: 3; pointer-events: none;
+  overflow: hidden;
+}
+.grain::before {
+  content: '';
+  position: absolute; inset: -50%;
+  opacity: .16;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.55'/%3E%3C/svg%3E");
+  animation: grain 1s steps(8) infinite;
+  will-change: transform;
+}
+@keyframes grain {
+  0%   { transform: translate3d(0, 0, 0); }
+  12%  { transform: translate3d(-3%, -2%, 0); }
+  25%  { transform: translate3d(2%, -4%, 0); }
+  37%  { transform: translate3d(-1%, 3%, 0); }
+  50%  { transform: translate3d(3%, 1%, 0); }
+  62%  { transform: translate3d(-4%, 2%, 0); }
+  75%  { transform: translate3d(1%, -3%, 0); }
+  87%  { transform: translate3d(-2%, 4%, 0); }
+  100% { transform: translate3d(0, 0, 0); }
+}
+
+.vignette {
+  position: fixed; inset: 0;
+  z-index: 2; pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 45%, transparent 40%, rgba(0,0,0,.55) 100%);
+}
+
+/* ── Custom cursor ──────────────────────────────────────────────────────── */
+
+.cursor {
+  position: fixed; top: 0; left: 0;
+  width: 14px; height: 14px; margin: -7px 0 0 -7px;
+  z-index: var(--z-cursor); pointer-events: none;
+  border-radius: 50%;
+  background: var(--accent);
+  display: none;
+  will-change: transform;
+}
+body.has-cursor .cursor { display: grid; place-items: center; }
+.cursor__label {
+  font: 500 10px/1 var(--f-mono); letter-spacing: .1em;
+  color: var(--on-accent); opacity: 0;
+}
+.cursor.is-play {
+  width: 74px; height: 74px; margin: -37px 0 0 -37px;
+  background: var(--accent);
+}
+.cursor.is-play .cursor__label { opacity: 1; }
+.cursor.is-link { width: 40px; height: 40px; margin: -20px 0 0 -20px; opacity: .55; }
+
+/* ── Cold open ──────────────────────────────────────────────────────────── */
+
+.coldopen {
+  position: fixed; inset: 0; z-index: var(--z-cold);
+  background: var(--bg);
+  display: grid; place-items: center;
+}
+.coldopen.is-done { pointer-events: none; }
+.coldopen__inner { width: min(320px, 70vw); text-align: center; }
+.coldopen__label,
+.coldopen__pct {
+  font: 500 11px/1 var(--f-mono);
+  letter-spacing: .28em; color: var(--muted);
+}
+.coldopen__pct { margin-top: .9rem; color: var(--accent); }
+.coldopen__bar {
+  margin-top: 1rem; height: 2px;
+  background: var(--surface-2); overflow: hidden;
+}
+.coldopen__bar i {
+  display: block; height: 100%; width: 0;
+  background: var(--accent);
+}
+.coldopen__shutter {
+  position: absolute; left: 0; right: 0; height: 50%;
+  background: var(--bg);
+}
+.coldopen__shutter--t { top: 0; }
+.coldopen__shutter--b { bottom: 0; }
+
+/* ── Timeline rail ──────────────────────────────────────────────────────── */
+
+.timeline {
+  position: fixed; z-index: var(--z-chrome);
+  right: 1.1rem; top: 50%; transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: flex-end; gap: .6rem;
+}
+.timeline__tc {
+  font: 400 10px/1 var(--f-mono); letter-spacing: .14em;
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+.timeline__track {
+  position: relative;
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 4px; border-radius: 999px;
+  background: rgba(255, 255, 255, .04);
+  border: 1px solid var(--border);
+}
+.timeline__clip {
+  position: relative;
+  width: 6px; height: 34px; border-radius: 999px;
+  background: var(--surface-2);
+  transition: background .25s var(--e-out), width .25s var(--e-out);
+}
+.timeline__clip:hover,
+.timeline__clip.is-on { background: var(--accent); }
+.timeline__clip span {
+  position: absolute; right: calc(100% + 12px); top: 50%;
+  transform: translateY(-50%) translateX(6px);
+  font: 500 10px/1 var(--f-mono); letter-spacing: .16em;
+  color: var(--text); white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity .2s var(--e-out), transform .2s var(--e-out);
+}
+.timeline__clip:hover span,
+.timeline__clip:focus-visible span {
+  opacity: 1; transform: translateY(-50%) translateX(0);
+}
+/* Tap targets: the visible clip is 6px wide, so widen the hit area behind it. */
+.timeline__clip::after {
+  content: ''; position: absolute; inset: -6px -20px;
+}
+.timeline__head {
+  position: absolute; left: 4px; right: 4px; top: 4px;
+  height: 2px; background: var(--cool);
+  box-shadow: 0 0 10px var(--cool);
+  pointer-events: none;
+}
+
+/* ── Top bar ────────────────────────────────────────────────────────────── */
+
+.topbar {
+  position: absolute; top: 0; left: 0; right: 0;
+  z-index: 10;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1.5rem var(--gut);
+}
+.topbar__name {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  font: 600 15px/1 var(--f-display); letter-spacing: -.01em;
+  color: var(--text); text-decoration: none;
+}
+.topbar__name b { color: var(--accent); font-weight: 700; }
+.topbar__cta {
+  display: inline-flex; align-items: center;
+  min-height: 44px;
+  font: 500 12px/1 var(--f-mono); letter-spacing: .12em;
+  color: var(--text); text-decoration: none;
+  padding: .7rem 1rem; border-radius: 999px;
+  border: 1px solid var(--border-lit);
+  transition: background .25s var(--e-out), border-color .25s var(--e-out);
+}
+.topbar__cta:hover { background: var(--surface-2); border-color: var(--accent); }
+
+/* ── Shared type ────────────────────────────────────────────────────────── */
+
+.eyebrow {
+  margin: 0 0 1.1rem;
+  font: 500 11px/1 var(--f-mono);
+  letter-spacing: .3em; color: var(--accent);
+}
+.h2 {
+  margin: 0;
+  font: 800 clamp(2.2rem, 6vw, 4.6rem)/0.98 var(--f-display);
+  letter-spacing: -.035em;
+}
+.lede {
+  margin: 1.4rem 0 0;
+  max-width: 52ch;
+  font-size: clamp(1rem, 1.6vw, 1.125rem);
+  color: var(--muted);
+}
+
+.section { padding: clamp(6rem, 14vh, 11rem) var(--gut); position: relative; }
+.section__head { max-width: var(--maxw); margin: 0 auto clamp(3rem, 6vw, 5rem); }
+
+/* ── Buttons ────────────────────────────────────────────────────────────── */
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-height: 48px; padding: .9rem 1.6rem;
+  border-radius: 999px;
+  font: 500 15px/1 var(--f-body); text-decoration: none;
+  transition: transform .25s var(--e-out), background .25s var(--e-out),
+              border-color .25s var(--e-out);
+  will-change: transform;
+}
+.btn--primary { background: var(--accent); color: var(--on-accent); font-weight: 600; }
+.btn--primary:hover { background: #FF8C4C; }
+.btn--ghost { color: var(--text); border: 1px solid var(--border-lit); }
+.btn--ghost:hover { border-color: var(--text); background: rgba(255,255,255,.04); }
+.btn--lg { min-height: 60px; padding: 1.1rem 2rem; font-size: 17px; }
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+
+.hero {
+  position: relative;
+  min-height: 100svh;
+  display: grid; align-items: center;
+  padding: 7rem var(--gut) 5rem;
+  overflow: hidden;
+}
+.hero__leak {
+  position: absolute; z-index: 0;
+  width: 70vw; height: 70vw; max-width: 900px; max-height: 900px;
+  left: 50%; top: 42%;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(255,122,47,.20) 0%, transparent 62%);
+  filter: blur(40px);
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* Three columns of drifting reels behind the name. */
+.wall {
+  position: absolute; inset: -12% -2%;
+  z-index: 0; pointer-events: none;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.1rem;
+  opacity: .30;
+  mask-image: radial-gradient(115% 85% at 50% 50%, #000 25%, transparent 76%);
+  -webkit-mask-image: radial-gradient(115% 85% at 50% 50%, #000 25%, transparent 76%);
+}
+.wall__col { display: flex; flex-direction: column; gap: 1.1rem; will-change: transform; }
+.wall__cell {
+  flex: none; aspect-ratio: 9 / 16; width: 100%;
+  border-radius: 10px; overflow: hidden; background: var(--surface);
+}
+.wall__cell video, .wall__cell img { width: 100%; height: 100%; object-fit: cover; }
+
+.hero__body { position: relative; z-index: 2; max-width: var(--maxw); margin: 0 auto; width: 100%; }
+.hero__name {
+  margin: 0;
+  font: 800 clamp(3.2rem, 13vw, 10.5rem)/0.86 var(--f-display);
+  letter-spacing: -.05em;
+}
+.hero__line {
+  margin: 1.6rem 0 0;
+  font: 600 clamp(1.15rem, 2.6vw, 1.9rem)/1.25 var(--f-display);
+  letter-spacing: -.02em;
+  max-width: 20ch;
+}
+.hero__sub { margin: 1rem 0 0; max-width: 46ch; color: var(--muted); }
+.hero__cta { display: flex; flex-wrap: wrap; gap: .8rem; margin-top: 2.4rem; }
+
+.hero__scroll {
+  position: absolute; left: 50%; bottom: 1.8rem;
+  transform: translateX(-50%);
+  display: flex; align-items: center; gap: .6rem;
+  font: 400 10px/1 var(--f-mono); letter-spacing: .3em; color: var(--muted);
+  z-index: 2;
+}
+.hero__scroll span {
+  width: 26px; height: 1px; background: var(--muted);
+  animation: scrollLine 2.2s var(--e-io) infinite;
+  transform-origin: left center;
+}
+@keyframes scrollLine {
+  0%, 100% { transform: scaleX(.3); opacity: .4; }
+  50%      { transform: scaleX(1);  opacity: 1; }
+}
+
+/* ── Clients ────────────────────────────────────────────────────────────── */
+
+.clients {
+  padding: clamp(3rem, 7vw, 5rem) 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+  overflow: hidden;
+}
+.clients__label {
+  margin: 0 var(--gut) 1.6rem;
+  font: 500 10px/1 var(--f-mono); letter-spacing: .3em; color: var(--muted);
+}
+.marquee { overflow: hidden; -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+           mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.marquee__row {
+  display: flex; gap: 3.5rem; width: max-content;
+  will-change: transform;
+}
+.marquee__item {
+  font: 700 clamp(1.6rem, 4vw, 3rem)/1 var(--f-display);
+  letter-spacing: -.03em; color: var(--surface-2);
+  white-space: nowrap;
+  -webkit-text-stroke: 1px rgba(255,255,255,.14);
+}
+.marquee__item.is-client { color: var(--text); -webkit-text-stroke: 0; }
+
+.clients__list {
+  display: none; /* the marquee carries this visually; the list is the a11y copy */
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee { display: none; }
+  .clients__list {
+    display: flex; flex-wrap: wrap; gap: 1.2rem 2.5rem;
+    margin: 0 var(--gut); padding: 0; list-style: none;
+    font: 700 clamp(1.2rem, 3vw, 2rem)/1 var(--f-display); letter-spacing: -.02em;
+  }
+  .clients__more { font: 400 15px/1.5 var(--f-body); color: var(--muted); align-self: center; }
+}
+
+/* ── Work: controls ─────────────────────────────────────────────────────── */
+
+.work__controls {
+  max-width: var(--maxw); margin: 0 auto 2.5rem;
+  display: flex; flex-wrap: wrap; align-items: center;
+  justify-content: space-between; gap: 1rem;
+}
+.chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+.chip {
+  min-height: 44px; padding: .6rem 1.1rem;
+  border-radius: 999px; border: 1px solid var(--border);
+  color: var(--muted);
+  font: 500 14px/1 var(--f-body);
+  transition: color .2s var(--e-out), border-color .2s var(--e-out),
+              background .2s var(--e-out);
+}
+.chip:hover { color: var(--text); border-color: var(--border-lit); }
+.chip.is-on { color: var(--on-accent); background: var(--accent); border-color: var(--accent); }
+
+.viewtoggle {
+  display: inline-flex; align-items: center; gap: .6rem;
+  min-height: 44px; padding: .6rem 1.1rem;
+  border-radius: 999px; border: 1px solid var(--border);
+  color: var(--muted); font: 500 13px/1 var(--f-body);
+  transition: color .2s var(--e-out), border-color .2s var(--e-out);
+}
+.viewtoggle:hover { color: var(--text); border-color: var(--border-lit); }
+.viewtoggle__icon {
+  width: 15px; height: 15px; border-radius: 3px;
+  border: 1.5px solid currentColor;
+  transition: transform .3s var(--e-out), border-radius .3s var(--e-out);
+}
+.viewtoggle[aria-pressed="true"] .viewtoggle__icon {
+  border-radius: 50%; transform: rotateY(38deg);
+}
+
+/* ── Work: stage ────────────────────────────────────────────────────────── */
+
+.stage {
+  position: relative;
+  max-width: var(--maxw); margin: 0 auto;
+  /* Card width scales with the viewport so the ring's radius — and therefore
+     how far the side cards throw out horizontally — shrinks with it. That is
+     what keeps the cylinder from overflowing on a narrow desktop window. */
+  --reel-w: clamp(110px, 14vw, 210px);
+  perspective: 1900px;
+}
+.stage__3d { position: relative; }
+
+/* Cylinder — cards on a ring, only the near half renders. */
+.stage.is-cylinder .stage__3d {
+  height: calc(var(--reel-w) * 1.778 + 110px);
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.stage.is-cylinder .reel {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--reel-w);
+  margin-left: calc(var(--reel-w) / -2);
+  margin-top: calc(var(--reel-w) * -0.889);   /* half of 16:9 height */
+  backface-visibility: hidden;
+  /* Order matters and GSAP can't express it: it always composes translate
+     before rotate, which would shove every card at the viewer instead of
+     spacing them round a ring. Declaring the transform here and driving it
+     with custom properties keeps rotateY-then-translateZ. */
+  transform: rotateY(var(--a, 0deg)) translateZ(var(--r, 0px));
+}
+/* Taken out of flow so the caption doesn't add height to the ring cards. */
+.stage.is-cylinder .reel__meta {
+  position: absolute; top: 100%; left: 0; right: 0;
+  opacity: 0; pointer-events: none;
+}
+
+/* Grid — ordinary flow, which keeps it responsive without JS layout maths. */
+.stage.is-grid .stage__3d {
+  display: grid; gap: clamp(.8rem, 1.6vw, 1.4rem);
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  height: auto;
+}
+.stage.is-grid .reel { position: relative; width: auto; margin: 0; }
+
+.stage__hint {
+  max-width: var(--maxw); margin: 1.6rem auto 0;
+  font: 400 11px/1 var(--f-mono); letter-spacing: .18em;
+  color: var(--muted); text-align: center;
+}
+
+/* ── Reel card ──────────────────────────────────────────────────────────── */
+
+.reel {
+  display: block; padding: 0; text-align: left;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.reel[hidden] { display: none; }
+
+.reel__media {
+  position: relative; display: block;
+  aspect-ratio: 9 / 16;
+  border-radius: var(--radius); overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, .5);
+  transition: box-shadow .3s var(--e-out), border-color .3s var(--e-out);
+}
+.reel:hover .reel__media { border-color: var(--border-lit); box-shadow: 0 30px 70px rgba(0,0,0,.65); }
+
+.reel__poster,
+.reel__vid {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%; object-fit: cover;
+}
+.reel__vid { opacity: 0; transition: opacity .35s var(--e-out); }
+.reel.is-playing .reel__vid { opacity: 1; }
+
+.reel__badge {
+  position: absolute; left: 8px; top: 8px; z-index: 2;
+  padding: .3rem .5rem; border-radius: 5px;
+  background: rgba(10, 10, 12, .72);
+  backdrop-filter: blur(6px);
+  font: 500 10px/1 var(--f-mono); letter-spacing: .1em;
+  color: var(--text); font-variant-numeric: tabular-nums;
+}
+.reel__client {
+  position: absolute; right: 8px; top: 8px; z-index: 2;
+  padding: .3rem .5rem; border-radius: 5px;
+  background: rgba(255, 122, 47, .92);
+  font: 500 10px/1 var(--f-mono); letter-spacing: .04em;
+  color: var(--on-accent);
+}
+.reel__play {
+  position: absolute; inset: 0; z-index: 2;
+  display: grid; place-items: center;
+  opacity: 0; transition: opacity .3s var(--e-out);
+}
+.reel__play svg { filter: drop-shadow(0 4px 14px rgba(0,0,0,.6)); }
+.reel:hover .reel__play,
+.reel:focus-visible .reel__play { opacity: 1; }
+
+.reel__meta { display: block; padding: .7rem 2px 0; transition: opacity .3s var(--e-out); }
+.reel__t {
+  display: block;
+  font: 600 14px/1.3 var(--f-display); letter-spacing: -.01em;
+  color: var(--text);
+}
+.reel__m {
+  display: block; margin-top: .25rem;
+  font: 400 10px/1 var(--f-mono); letter-spacing: .12em;
+  color: var(--muted); font-variant-numeric: tabular-nums;
+}
+
+/* ── Tools ──────────────────────────────────────────────────────────────── */
+
+.toolgrid {
+  max-width: var(--maxw); margin: 0 auto;
+  display: grid; gap: clamp(.8rem, 1.6vw, 1.2rem);
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  perspective: 1200px;
+}
+.tool {
+  display: flex; flex-direction: column; align-items: flex-start; gap: 1rem;
+  padding: 1.4rem;
+  border-radius: var(--radius);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  transform-style: preserve-3d;
+  transition: transform .35s var(--e-out), border-color .35s var(--e-out),
+              box-shadow .35s var(--e-out);
+  will-change: transform;
+}
+.tool:hover {
+  border-color: var(--border-lit);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, .55);
+}
+.tool__mark {
+  display: grid; place-items: center;
+  width: 52px; height: 52px; border-radius: 11px;
+  background: var(--tb); color: var(--tf);
+  border: 1px solid color-mix(in srgb, var(--tf) 30%, transparent);
+  font: 700 19px/1 var(--f-display); letter-spacing: -.02em;
+}
+.tool--resolve .tool__mark { padding: 6px; }
+.tool__name { font: 500 14px/1.3 var(--f-body); color: var(--text); }
+
+/* ── Process ────────────────────────────────────────────────────────────── */
+
+.steps {
+  max-width: var(--maxw); margin: 0 auto; padding: 0; list-style: none;
+  display: grid; gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+.step {
+  padding: 2rem 1.6rem;
+  background: var(--bg);
+  transition: background .3s var(--e-out);
+}
+.step:hover { background: var(--surface); }
+.step__n { font: 400 10px/1 var(--f-mono); letter-spacing: .24em; color: var(--accent); }
+.step__h {
+  margin: 1rem 0 .6rem;
+  font: 700 1.3rem/1 var(--f-display); letter-spacing: -.02em;
+}
+.step__p { margin: 0; font-size: 14px; color: var(--muted); }
+
+/* ── Contact ────────────────────────────────────────────────────────────── */
+
+.contact { text-align: center; }
+.contact__inner { max-width: 760px; margin: 0 auto; }
+.contact__h { margin-top: 0; }
+.contact__lede { margin-left: auto; margin-right: auto; }
+.contact__actions {
+  display: flex; flex-wrap: wrap; gap: .8rem;
+  justify-content: center; margin-top: 2.6rem;
+}
+.contact__avail {
+  display: inline-flex; align-items: center; gap: .55rem;
+  margin: 2.2rem 0 0;
+  font: 400 12px/1 var(--f-mono); letter-spacing: .1em; color: var(--muted);
+}
+.contact__avail i {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #3DDC84; box-shadow: 0 0 0 3px rgba(61, 220, 132, .18);
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+
+.foot {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  justify-content: space-between;
+  padding: 2rem var(--gut) 3rem;
+  border-top: 1px solid var(--border);
+  font-size: 13px; color: var(--muted);
+}
+.foot__mono { font: 400 10px/1.6 var(--f-mono); letter-spacing: .22em; }
+
+/* ── Lightbox ───────────────────────────────────────────────────────────── */
+
+.lb {
+  position: fixed; inset: 0; z-index: var(--z-lb);
+  display: grid; place-items: center;
+}
+.lb[hidden] { display: none; }
+.lb__scrim {
+  position: absolute; inset: 0;
+  background: rgba(6, 6, 8, .88);
+  backdrop-filter: blur(14px);
+  opacity: 0;
+}
+.lb__stage {
+  position: relative;
+  width: min(92vw, 460px);
+  max-height: 88svh;
+}
+.lb__frame { margin: 0; position: relative; }
+.lb__video {
+  width: 100%; max-height: 78svh;
+  aspect-ratio: 9 / 16;
+  object-fit: contain;
+  border-radius: var(--radius);
+  background: #000;
+  box-shadow: 0 40px 100px rgba(0, 0, 0, .8);
+}
+.lb__cap {
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .3rem .9rem;
+  padding-top: .9rem;
+}
+.lb__title { font: 600 15px/1.3 var(--f-display); letter-spacing: -.01em; }
+.lb__meta {
+  font: 400 10px/1 var(--f-mono); letter-spacing: .14em; color: var(--muted);
+  font-variant-numeric: tabular-nums;
+}
+
+.lb__btn {
+  position: absolute; z-index: 2;
+  display: grid; place-items: center;
+  width: 48px; height: 48px; border-radius: 50%;
+  color: var(--text);
+  background: rgba(255, 255, 255, .07);
+  border: 1px solid var(--border);
+  backdrop-filter: blur(8px);
+  transition: background .2s var(--e-out), border-color .2s var(--e-out);
+}
+.lb__btn:hover { background: rgba(255,255,255,.14); border-color: var(--border-lit); }
+.lb__btn--close { top: 1rem; right: 1rem; }
+.lb__btn--prev  { left: 1rem;  top: 50%; margin-top: -24px; }
+.lb__btn--next  { right: 1rem; top: 50%; margin-top: -24px; }
+
+/* ── Responsive ─────────────────────────────────────────────────────────── */
+
+@media (max-width: 1024px) {
+  /* The rail becomes a slim scrubber at the bottom — same idea, no screen cost. */
+  .timeline {
+    right: 0; left: 0; top: auto; bottom: 0;
+    transform: none;
+    flex-direction: row; align-items: center; gap: .7rem;
+    padding: .5rem var(--gut) calc(.5rem + env(safe-area-inset-bottom));
+    background: linear-gradient(to top, var(--bg) 55%, transparent);
+  }
+  .timeline__track { flex-direction: row; flex: 1; }
+  .timeline__clip { width: auto; flex: 1; height: 5px; }
+  /* The visible clip is a 5px bar, so the tap area has to be pushed out
+     vertically to clear 44px — the desktop rail extends sideways instead. */
+  .timeline__clip::after { inset: -20px -2px; }
+  .timeline__clip span { display: none; }
+  .timeline__head { left: 4px; top: 4px; bottom: 4px; right: auto; width: 2px; height: auto; }
+  .stage__hint { padding-bottom: 3rem; }
+}
+
+@media (max-width: 720px) {
+  .stage.is-grid .stage__3d { grid-template-columns: repeat(2, 1fr); }
+  .toolgrid { grid-template-columns: repeat(2, 1fr); }
+  .lb__btn--prev { left: .35rem; }
+  .lb__btn--next { right: .35rem; }
+  .hero__scroll { display: none; }
+}
+
+/* Deliberately no single-column fallback. A 9:16 card at full width on a phone
+   is ~600px tall, which turns fourteen reels into an 8000px scroll. Two columns
+   keeps the body of work scannable, which is the whole job of this page. */
+
+/* ── Reduced motion ─────────────────────────────────────────────────────────
+   Not a degraded page — a complete one. Grid only, posters only, no drift,
+   no grain flicker, no smooth scroll, no cursor. Every reel still opens. */
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .grain::before { animation: none; opacity: .1; }
+  .wall { display: none; }
+  .hero__leak { display: none; }
+  .hero__scroll { display: none; }
+  .cursor { display: none !important; }
+  body.has-cursor, body.has-cursor a, body.has-cursor button { cursor: auto; }
+  .coldopen { display: none; }
+  .viewtoggle { display: none; }
+  .stage__hint { display: none; }
+}

@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Deepak Saini — Video Editor</title>
+<meta name="description" content="Short-form video editor for creators, brands and businesses. Reels, property films and food content cut in Premiere Pro, DaVinci Resolve and After Effects.">
+<meta name="theme-color" content="#0A0A0C">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Deepak Saini — Video Editor">
+<meta property="og:description" content="Short-form video for creators, brands and businesses. Cut, graded and delivered.">
+<meta property="og:image" content="media/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Inter:wght@400;500&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- ── Cold open ─────────────────────────────────────────────────────────── -->
+<div class="coldopen" id="coldopen" aria-hidden="true">
+  <div class="coldopen__inner">
+    <div class="coldopen__label">RENDERING</div>
+    <div class="coldopen__bar"><i id="coldopenFill"></i></div>
+    <div class="coldopen__pct" id="coldopenPct">00%</div>
+  </div>
+  <div class="coldopen__shutter coldopen__shutter--t"></div>
+  <div class="coldopen__shutter coldopen__shutter--b"></div>
+</div>
+
+<!-- Fixed ambience + chrome. Lives outside #smooth-wrapper so ScrollSmoother
+     doesn't drag it around with the page. -->
+<div class="grain" aria-hidden="true"></div>
+<div class="vignette" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"><span class="cursor__label">PLAY</span></div>
+
+<nav class="timeline" id="timeline" aria-label="Jump to section">
+  <div class="timeline__tc" id="timelineTc">00:00:00</div>
+  <div class="timeline__track" id="timelineTrack">
+    <button class="timeline__clip" data-target="hero"><span>HERO</span></button>
+    <button class="timeline__clip" data-target="work"><span>WORK</span></button>
+    <button class="timeline__clip" data-target="tools"><span>TOOLS</span></button>
+    <button class="timeline__clip" data-target="process"><span>PROCESS</span></button>
+    <button class="timeline__clip" data-target="contact"><span>CONTACT</span></button>
+    <i class="timeline__head" id="timelineHead" aria-hidden="true"></i>
+  </div>
+</nav>
+
+<a class="skip" href="#work">Skip to the work</a>
+
+<div id="smooth-wrapper">
+<div id="smooth-content">
+
+  <header class="topbar">
+    <a class="topbar__name" href="#hero"><b>Deepak</b> Saini</a>
+    <a class="topbar__cta" href="https://wa.me/919350972226?text=Hi%20Deepak%2C%20I%20saw%20your%20portfolio%20and%20I%27d%20like%20to%20talk%20about%20a%20video." target="_blank" rel="noopener">
+      WhatsApp
+    </a>
+  </header>
+
+  <!-- ── Hero ────────────────────────────────────────────────────────────── -->
+  <section class="hero" id="hero">
+    <div class="hero__leak" aria-hidden="true"></div>
+
+    <!-- Three columns of silent reels, drifting. Filled by js/motion.js. -->
+    <div class="wall" id="wall" aria-hidden="true">
+      <div class="wall__col" data-dir="up"></div>
+      <div class="wall__col" data-dir="down"></div>
+      <div class="wall__col" data-dir="up"></div>
+    </div>
+
+    <div class="hero__body">
+      <p class="eyebrow">EDITOR · SHORT-FORM · SINCE THE FIRST CUT</p>
+      <h1 class="hero__name" id="heroName">Deepak Saini</h1>
+      <p class="hero__line">I cut reels that people actually finish.</p>
+      <p class="hero__sub">
+        Short-form video for creators, brands and businesses — scripted hooks, tight pacing,
+        proper colour. Cut in Premiere&nbsp;Pro and DaVinci&nbsp;Resolve.
+      </p>
+      <div class="hero__cta">
+        <a class="btn btn--primary" href="https://wa.me/919350972226?text=Hi%20Deepak%2C%20I%20saw%20your%20portfolio%20and%20I%27d%20like%20to%20talk%20about%20a%20video." target="_blank" rel="noopener">
+          WhatsApp Deepak
+        </a>
+        <a class="btn btn--ghost" href="#work" data-scrollto="work">See the work</a>
+      </div>
+    </div>
+
+    <div class="hero__scroll" aria-hidden="true"><span></span>SCROLL</div>
+  </section>
+
+  <!-- ── Clients ─────────────────────────────────────────────────────────── -->
+  <section class="clients" id="clients">
+    <p class="clients__label">RECENT WORK FOR</p>
+    <div class="marquee" id="marquee" aria-hidden="true">
+      <div class="marquee__row" id="marqueeRow"></div>
+    </div>
+    <ul class="clients__list">
+      <li>digibeez.in</li>
+      <li>reddoormedia.co</li>
+      <li>karly.closedit</li>
+      <li class="clients__more">…and Instagram creators across niches</li>
+    </ul>
+  </section>
+
+  <!-- ── Work ────────────────────────────────────────────────────────────── -->
+  <section class="section work" id="work">
+    <div class="section__head">
+      <p class="eyebrow" data-scramble>SELECTED WORK</p>
+      <h2 class="h2">The&nbsp;work.</h2>
+      <p class="lede">
+        Every reel here is a real delivery. Tap any one to watch it with sound.
+      </p>
+    </div>
+
+    <div class="work__controls">
+      <div class="chips" role="tablist" aria-label="Filter work by category">
+        <button class="chip is-on" role="tab" aria-selected="true" data-filter="all">All</button>
+        <button class="chip" role="tab" aria-selected="false" data-filter="real-estate">Real Estate</button>
+        <button class="chip" role="tab" aria-selected="false" data-filter="food-cafe">Food &amp; Café</button>
+      </div>
+      <button class="viewtoggle" id="viewToggle" aria-pressed="true">
+        <span class="viewtoggle__icon" aria-hidden="true"></span>
+        <span class="viewtoggle__text">Reel wall</span>
+      </button>
+    </div>
+
+    <p class="sr-only" role="status" aria-live="polite" id="workCount"></p>
+
+    <div class="stage is-cylinder" id="stage">
+      <div class="stage__3d" id="stage3d"><!-- reel cards injected by js/reelwall.js --></div>
+    </div>
+
+    <p class="stage__hint" id="stageHint">Drag to spin · click a reel to watch</p>
+  </section>
+
+  <!-- ── Tools ───────────────────────────────────────────────────────────── -->
+  <section class="section tools" id="tools">
+    <div class="section__head">
+      <p class="eyebrow" data-scramble>TOOLBOX</p>
+      <h2 class="h2">Industry standard,<br>top to bottom.</h2>
+      <p class="lede">
+        The whole post pipeline in one pair of hands — cut, grade, motion, sound, delivery.
+        Nothing gets handed off and nothing gets lost between people.
+      </p>
+    </div>
+
+    <div class="toolgrid" id="toolgrid">
+      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Pr</span><span class="tool__name">Premiere Pro</span></div>
+      <div class="tool tool--resolve" style="--tb:#161616;--tf:#F2F2F5">
+        <span class="tool__mark" aria-hidden="true">
+          <svg viewBox="0 0 40 40" width="34" height="34">
+            <circle cx="14" cy="14" r="7" fill="#FF4B4B" opacity=".85"/>
+            <circle cx="26" cy="14" r="7" fill="#35C8D8" opacity=".85"/>
+            <circle cx="20" cy="26" r="7" fill="#FFC64B" opacity=".85"/>
+          </svg>
+        </span>
+        <span class="tool__name">DaVinci Resolve</span>
+      </div>
+      <div class="tool" style="--tb:#001E36;--tf:#31A8FF"><span class="tool__mark">Ps</span><span class="tool__name">Photoshop</span></div>
+      <!-- TODO: confirm with Deepak which of the four below he actually works in,
+           and delete any he does not. An overstated tool list gets caught fast. -->
+      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Ae</span><span class="tool__name">After Effects</span></div>
+      <div class="tool" style="--tb:#330000;--tf:#FF9A00"><span class="tool__mark">Ai</span><span class="tool__name">Illustrator</span></div>
+      <div class="tool" style="--tb:#00005B;--tf:#00E4BB"><span class="tool__mark">Au</span><span class="tool__name">Audition</span></div>
+      <div class="tool" style="--tb:#001E36;--tf:#31A8FF"><span class="tool__mark">Lr</span><span class="tool__name">Lightroom</span></div>
+    </div>
+  </section>
+
+  <!-- ── Process ─────────────────────────────────────────────────────────── -->
+  <section class="section process" id="process">
+    <div class="section__head">
+      <p class="eyebrow" data-scramble>PROCESS</p>
+      <h2 class="h2">What you get.</h2>
+    </div>
+    <ol class="steps">
+      <li class="step">
+        <span class="step__n">01</span>
+        <h3 class="step__h">Edit</h3>
+        <p class="step__p">Hook in the first second, no dead frames after it. Cut to hold attention, not to fill a runtime.</p>
+      </li>
+      <li class="step">
+        <span class="step__n">02</span>
+        <h3 class="step__h">Grade</h3>
+        <p class="step__p">Colour matched across every clip in Resolve, so a reel shot over three days looks like one shoot.</p>
+      </li>
+      <li class="step">
+        <span class="step__n">03</span>
+        <h3 class="step__h">Motion</h3>
+        <p class="step__p">Titles, captions and transitions that carry the message instead of decorating it.</p>
+      </li>
+      <li class="step">
+        <span class="step__n">04</span>
+        <h3 class="step__h">Sound</h3>
+        <p class="step__p">Levelled dialogue, cleaned noise, music that sits under the voice rather than over it.</p>
+      </li>
+      <li class="step">
+        <span class="step__n">05</span>
+        <h3 class="step__h">Delivery</h3>
+        <p class="step__p">Exported for where it's going — 9:16 for Reels and Shorts, resized and reframed for anywhere else.</p>
+      </li>
+    </ol>
+  </section>
+
+  <!-- ── Contact ─────────────────────────────────────────────────────────── -->
+  <section class="section contact" id="contact">
+    <div class="contact__inner">
+      <p class="eyebrow" data-scramble>GET IN TOUCH</p>
+      <h2 class="h2 contact__h">Got footage sitting<br>on a drive?</h2>
+      <p class="lede contact__lede">
+        Send it over and I'll tell you what I'd do with it. That part's free.
+      </p>
+      <div class="contact__actions">
+        <a class="btn btn--primary btn--lg" href="https://wa.me/919350972226?text=Hi%20Deepak%2C%20I%20saw%20your%20portfolio%20and%20I%27d%20like%20to%20talk%20about%20a%20video." target="_blank" rel="noopener">
+          WhatsApp +91 93509 72226
+        </a>
+        <a class="btn btn--ghost btn--lg" href="https://www.instagram.com/deepak.sainii__" target="_blank" rel="noopener">
+          Instagram
+        </a>
+      </div>
+      <p class="contact__avail"><i></i>Currently taking work · Usually replies the same day</p>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>© <span id="year">2026</span> Deepak Saini</span>
+    <span class="foot__mono">SHORT-FORM VIDEO EDITOR</span>
+  </footer>
+
+</div><!-- /#smooth-content -->
+</div><!-- /#smooth-wrapper -->
+
+<!-- ── Lightbox ──────────────────────────────────────────────────────────── -->
+<div class="lb" id="lightbox" role="dialog" aria-modal="true" aria-label="Video player" hidden>
+  <div class="lb__scrim" data-lb-close></div>
+  <div class="lb__stage">
+    <figure class="lb__frame" id="lbFrame">
+      <video class="lb__video" id="lbVideo" playsinline controls preload="none"></video>
+      <figcaption class="lb__cap">
+        <span class="lb__title" id="lbTitle"></span>
+        <span class="lb__meta" id="lbMeta"></span>
+      </figcaption>
+    </figure>
+  </div>
+  <button class="lb__btn lb__btn--prev" id="lbPrev" aria-label="Previous reel"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="lb__btn lb__btn--next" id="lbNext" aria-label="Next reel"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M9 5l7 7-7 7" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+  <button class="lb__btn lb__btn--close" id="lbClose" aria-label="Close player"><svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button>
+</div>
+
+<noscript>
+  <div class="noscript">
+    This portfolio plays video and needs JavaScript. You can see Deepak's work on
+    <a href="https://www.instagram.com/deepak.sainii__">Instagram</a>
+    or message him on <a href="https://wa.me/919350972226">WhatsApp</a>.
+  </div>
+</noscript>
+
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Flip.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/Draggable.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/InertiaPlugin.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
+
+<script src="data/works.js"></script>
+<script src="js/main.js"></script>
+<script src="js/reelwall.js"></script>
+<script src="js/lightbox.js"></script>
+<script src="js/cursor.js"></script>
+<script src="js/motion.js"></script>
+</body>
+</html>
