@@ -7,7 +7,7 @@
   'use strict';
 
   const DS = window.DS;
-  if (DS.touch || DS.reduced) return;
+  if (DS.touch || DS.reduced || typeof window.gsap === 'undefined') return;
 
   const el = document.getElementById('cursor');
   if (!el) return;

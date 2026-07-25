@@ -17,7 +17,13 @@
   const stage3d = document.getElementById('stage3d');
   if (!stageEl || !stage3d || !DS.works.length) return;
 
-  gsap.registerPlugin(Flip, Draggable, InertiaPlugin);
+  // Without GSAP there's no cylinder and no Flip, but the work itself still has
+  // to show up — that's the entire point of the page. Build the cards, force
+  // the grid, and wire clicks; just skip everything that moves.
+  const HAS_GSAP =
+    typeof window.gsap !== 'undefined' && !!(window.Flip && window.Draggable);
+  if (HAS_GSAP) gsap.registerPlugin(Flip, Draggable, InertiaPlugin);
+  DS.hasGsap = HAS_GSAP;
 
   const AUTO_DEG_PER_SEC = 4;      // ~90s per revolution — present, not busy
   const DRAG_DEG_PER_PX = 0.22;
@@ -162,7 +168,8 @@
   };
 
   function render() {
-    gsap.set(stage3d, { rotationY: rotation });
+    if (HAS_GSAP) gsap.set(stage3d, { rotationY: rotation });
+    else stage3d.style.transform = `rotateY(${rotation}deg)`;
   }
 
   /* Only cards on the near arc get to decode. Throttled — this doesn't need
@@ -189,10 +196,10 @@
     render();
     updateFacing();
   }
-  gsap.ticker.add(tick);
+  if (HAS_GSAP) gsap.ticker.add(tick);
 
   function startSpin() {
-    if (DS.reduced || DS.state.view !== 'cylinder' || spinning) return;
+    if (!HAS_GSAP || DS.reduced || DS.state.view !== 'cylinder' || spinning) return;
     spinning = true;
     // The hero wall and this stage both want most of the governor's budget.
     // Handing off explicitly stops them evicting each other's videos in a loop,
@@ -210,7 +217,7 @@
   /* ── Drag ───────────────────────────────────────────────────────────────── */
 
   function initDrag() {
-    if (DS.reduced) return;
+    if (!HAS_GSAP || DS.reduced) return;
     // Draggable measures its target, so the proxy has to actually be in the
     // document even though nothing ever sees it.
     const proxy = document.createElement('div');
@@ -253,7 +260,8 @@
   /* ── View switching ─────────────────────────────────────────────────────── */
 
   function applyView(view, animate) {
-    const state = animate ? Flip.getState(cards) : null;
+    if (!HAS_GSAP) view = 'grid';
+    const state = animate && HAS_GSAP ? Flip.getState(cards) : null;
 
     stageEl.classList.toggle('is-cylinder', view === 'cylinder');
     stageEl.classList.toggle('is-grid', view === 'grid');
@@ -264,12 +272,13 @@
       rotation = 0;
       // Grid-mode tilt leaves an inline transform behind, which would win over
       // the CSS rule that builds the ring. Clear it before positioning.
-      gsap.set(cards, { clearProps: 'transform' });
+      if (HAS_GSAP) gsap.set(cards, { clearProps: 'transform' });
       positionCylinder();
       render();
     } else {
       clearCylinder();
-      gsap.set(stage3d, { clearProps: 'transform' });
+      if (HAS_GSAP) gsap.set(stage3d, { clearProps: 'transform' });
+      else stage3d.style.transform = '';
     }
 
     if (view === 'grid') {
@@ -320,13 +329,18 @@
   /* ── Filtering ──────────────────────────────────────────────────────────── */
 
   function applyFilter() {
-    const state = Flip.getState(cards);
+    const state = HAS_GSAP ? Flip.getState(cards) : null;
 
     cards.forEach((card, i) => {
       card.hidden = !DS.matches(DS.works[i]);
     });
 
     if (DS.state.view === 'cylinder') { positionCylinder(); render(); }
+
+    if (!HAS_GSAP) {
+      if (io) { unobserveGrid(); observeGrid(); }
+      return;
+    }
 
     Flip.from(state, {
       absolute: true,

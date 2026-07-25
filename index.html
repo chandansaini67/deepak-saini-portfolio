@@ -266,6 +266,18 @@
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrambleTextPlugin.min.js"></script>
 
+<script>
+// The intro overlay covers the whole viewport and is normally torn down by a
+// GSAP timeline. If the CDN is unreachable — blocked network, corporate proxy,
+// jsdelivr having a bad day — that timeline never runs and the visitor stares
+// at a black screen. Drop the overlay immediately and mark the page so the
+// scripts below fall back to a plain, static portfolio instead of throwing.
+if (typeof window.gsap === 'undefined') {
+  document.documentElement.classList.add('no-gsap');
+  var c = document.getElementById('coldopen');
+  if (c) c.remove();
+}
+</script>
 <script src="data/works.js"></script>
 <script src="js/main.js"></script>
 <script src="js/reelwall.js"></script>

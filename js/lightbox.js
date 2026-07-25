@@ -20,7 +20,18 @@
   const caption = lb && lb.querySelector('.lb__cap');
   if (!lb || !frame || !video) return;
 
-  gsap.registerPlugin(Flip);
+  // The player must work even if the GSAP CDN is unreachable — it's the one
+  // thing on the page a visitor actually came to do. Without it we just skip
+  // the morph and show the modal.
+  const HAS_GSAP = typeof window.gsap !== 'undefined' && !!window.Flip;
+  if (HAS_GSAP) gsap.registerPlugin(Flip);
+
+  const fade = (el, vars) => {
+    if (HAS_GSAP) return gsap.to(el, vars);
+    if (typeof vars.opacity === 'number') el.style.opacity = String(vars.opacity);
+    if (vars.onComplete) vars.onComplete();
+    return null;
+  };
 
   let open = false;
   let current = -1;
@@ -68,9 +79,9 @@
     DS.governor.releaseAll();
 
     load(index);
-    gsap.to(scrim, { opacity: 1, duration: 0.35, ease: 'power2.out' });
+    fade(scrim, { opacity: 1, duration: 0.35, ease: 'power2.out' });
 
-    if (media && !DS.reduced) {
+    if (media && !DS.reduced && HAS_GSAP) {
       // Morph the video itself, not the whole frame — the frame is taller than
       // the video because of the caption, so fitting it to a 9:16 card would
       // land the video short of the card's edges.
@@ -86,8 +97,10 @@
         },
       });
       gsap.fromTo(caption, { opacity: 0, y: 8 }, { opacity: 1, y: 0, duration: 0.3, delay: 0.32 });
-    } else {
+    } else if (HAS_GSAP) {
       gsap.fromTo(frame, { opacity: 0, y: 16 }, { opacity: 1, y: 0, duration: 0.3, onComplete: () => { busy = false; } });
+    } else {
+      busy = false;
     }
 
     document.getElementById('lbClose').focus({ preventScroll: true });
@@ -99,13 +112,14 @@
     const media = opener && opener.querySelector('.reel__media');
 
     video.pause();
-    gsap.to(scrim, { opacity: 0, duration: 0.3, ease: 'power2.in' });
+    fade(scrim, { opacity: 0, duration: 0.3, ease: 'power2.in' });
 
     const finish = () => {
       lb.hidden = true;
       video.removeAttribute('src');
       video.load();
-      gsap.set([frame, video, caption], { clearProps: 'all' });
+      if (HAS_GSAP) gsap.set([frame, video, caption], { clearProps: 'all' });
+      else [frame, video, caption].forEach((el) => el && el.removeAttribute('style'));
       document.body.style.overflow = '';
       if (DS.smoother) DS.smoother.paused(false);
       open = false;
@@ -114,9 +128,9 @@
       opener = null;
     };
 
-    gsap.to(caption, { opacity: 0, duration: 0.18 });
+    fade(caption, { opacity: 0, duration: 0.18 });
 
-    if (media && !DS.reduced && media.getBoundingClientRect().width > 0) {
+    if (HAS_GSAP && media && !DS.reduced && media.getBoundingClientRect().width > 0) {
       Flip.fit(video, media, {
         scale: true,
         duration: 0.45,
@@ -124,7 +138,7 @@
         onComplete: finish,
       });
     } else {
-      gsap.to(frame, { opacity: 0, duration: 0.2, onComplete: finish });
+      fade(frame, { opacity: 0, duration: 0.2, onComplete: finish });
     }
   }
 
@@ -137,12 +151,12 @@
 
     // Cross-fade the frame rather than re-morphing — we're already open, and a
     // second Flip from a card that may be behind the scrim reads as a glitch.
-    gsap.to(frame, {
+    fade(frame, {
       opacity: 0, duration: 0.18, ease: 'power2.in',
       onComplete: () => {
         load(next);
         opener = cardFor(next) || opener;
-        gsap.to(frame, { opacity: 1, duration: 0.25, ease: 'power2.out' });
+        fade(frame, { opacity: 1, duration: 0.25, ease: 'power2.out' });
       },
     });
   }

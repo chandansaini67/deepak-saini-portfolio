@@ -719,6 +719,29 @@ body.has-cursor .cursor { display: grid; place-items: center; }
    is ~600px tall, which turns fourteen reels into an 8000px scroll. Two columns
    keeps the body of work scannable, which is the whole job of this page. */
 
+/* ── GSAP unavailable ───────────────────────────────────────────────────────
+   Set by the inline guard in index.html when the CDN doesn't arrive. Same
+   destination as reduced motion: a complete, static portfolio. Everything that
+   only exists to move gets hidden rather than left sitting there inert. */
+
+.no-gsap .wall,
+.no-gsap .hero__leak,
+.no-gsap .hero__scroll,
+.no-gsap .cursor,
+.no-gsap .coldopen,
+.no-gsap .marquee,
+.no-gsap .viewtoggle,
+.no-gsap .stage__hint,
+.no-gsap .timeline__head { display: none; }
+
+.no-gsap .clients__list {
+  display: flex; flex-wrap: wrap; gap: 1.2rem 2.5rem;
+  margin: 0 var(--gut); padding: 0; list-style: none;
+  font: 700 clamp(1.2rem, 3vw, 2rem)/1 var(--f-display); letter-spacing: -.02em;
+}
+.no-gsap .clients__more { font: 400 15px/1.5 var(--f-body); color: var(--muted); align-self: center; }
+.no-gsap .lb__scrim { opacity: 1; }
+
 /* ── Reduced motion ─────────────────────────────────────────────────────────
    Not a degraded page — a complete one. Grid only, posters only, no drift,
    no grain flicker, no smooth scroll, no cursor. Every reel still opens. */

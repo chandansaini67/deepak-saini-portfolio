@@ -15,6 +15,24 @@
   const q = (s, r) => (r || document).querySelector(s);
   const qa = (s, r) => Array.from((r || document).querySelectorAll(s));
 
+  // Everything below this point is motion, and all of it needs GSAP. If the CDN
+  // didn't arrive, wire up plain navigation so the page is still fully usable
+  // and get out — the inline guard in index.html has already dropped the intro
+  // overlay and put .no-gsap on <html>.
+  if (typeof window.gsap === 'undefined') {
+    const jump = (id) => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: DS.reduced ? 'auto' : 'smooth', block: 'start' });
+    };
+    qa('[data-scrollto]').forEach((a) =>
+      a.addEventListener('click', (e) => { e.preventDefault(); jump(a.dataset.scrollto); })
+    );
+    qa('.timeline__clip').forEach((c) =>
+      c.addEventListener('click', () => jump(c.dataset.target))
+    );
+    return;
+  }
+
   gsap.registerPlugin(ScrollTrigger, SplitText, ScrambleTextPlugin);
 
   /* ── Cold open ──────────────────────────────────────────────────────────── */
