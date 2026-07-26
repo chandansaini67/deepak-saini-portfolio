@@ -77,7 +77,7 @@ window.DS = (function () {
 
   const CATEGORY_LABEL = {
     'real-estate': 'REAL ESTATE',
-    'food-cafe': 'FOOD & CAFÉ',
+    'local-business': 'LOCAL BUSINESS',
   };
 
   /* ── Boot ───────────────────────────────────────────────────────────────── */

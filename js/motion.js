@@ -250,15 +250,19 @@
     const row = q('#marqueeRow');
     if (!row || DS.reduced) return;
 
+    // Who the work is for, alternating with what it's made in. No client names
+    // — the marquee says what Deepak does, not whose logo he can borrow.
     const items = [
-      { t: 'digibeez.in', client: true },
-      { t: 'Premiere Pro' },
-      { t: 'reddoormedia.co', client: true },
-      { t: 'DaVinci Resolve' },
-      { t: 'karly.closedit', client: true },
-      { t: 'After Effects' },
       { t: 'Instagram Creators', client: true },
+      { t: 'Premiere Pro' },
+      { t: 'Real Estate Agents', client: true },
+      { t: 'After Effects' },
+      { t: 'Cafés & Restaurants', client: true },
       { t: 'Photoshop' },
+      { t: 'Local Businesses', client: true },
+      { t: 'CapCut' },
+      { t: 'Personal Brands', client: true },
+      { t: 'Canva' },
     ];
 
     const render = () =>
@@ -320,8 +324,16 @@
       if (!el || !el.isConnected) { reveals.splice(i, 1); continue; }
 
       if (el.getBoundingClientRect().top < fold) {
-        if (tw.scrollTrigger) tw.scrollTrigger.kill();
+        // Order and arguments both matter here, and getting them wrong turned
+        // this rescue into the very bug it exists to prevent.
+        //
+        // ScrollTrigger.kill() also kills the animation it drives unless you
+        // pass allowAnimation. Killing first left a dead tween, so the
+        // progress(1) after it silently did nothing and the element stayed
+        // frozen at opacity:0 forever. Finish the tween first, then detach the
+        // trigger with kill(revert=false, allowAnimation=true).
         tw.progress(1);
+        if (tw.scrollTrigger) tw.scrollTrigger.kill(false, true);
         reveals.splice(i, 1);
       }
     }
@@ -367,7 +379,37 @@
     reveal('.work__controls',
       { y: 18, opacity: 0, duration: 0.6, ease: 'power3.out' },
       { trigger: '.work__controls', start: 'top 88%' });
+
+    // About has its own layout rather than a .section__head, so it needs its
+    // own reveal — registered, like everything else.
+    reveal(['.about__intro .h2', '.about__lead', '.about__body'],
+      { y: 26, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.1 },
+      { trigger: '.about__grid', start: 'top 80%' });
+
+    reveal('.solve__col',
+      { y: 30, opacity: 0, duration: 0.65, ease: 'power3.out', stagger: 0.12 },
+      { trigger: '.solve', start: 'top 82%' });
   }
+
+  /* The About fan uses his own poster frames, not a stock desk photo. Must run
+     after `reveals` exists — it registers one. */
+  (function aboutFan() {
+    const frames = qa('.about__frame');
+    if (!frames.length || !DS.works.length) return;
+
+    // Spread the picks across the running order so the fan shows range rather
+    // than three stills from the same shoot.
+    const step = Math.max(1, Math.floor(DS.works.length / frames.length));
+    frames.forEach((f, i) => {
+      const w = DS.works[(i * step) % DS.works.length];
+      if (w) f.style.backgroundImage = `url("${w.poster}")`;
+    });
+
+    if (DS.reduced) return;
+    reveal(frames,
+      { y: 30, opacity: 0, duration: 0.7, ease: 'power3.out', stagger: 0.08 },
+      { trigger: '.about__fan', start: 'top 85%' });
+  })();
 
   /* Eyebrows burn in like a slate. */
   qa('[data-scramble]').forEach((el) => {
@@ -397,12 +439,19 @@
         { trigger: '#toolgrid', start: 'top 82%' });
 
       // Each tile breathes on its own offset so the grid never pulses in unison.
-      // Delayed past the reveal so the two don't both own y at once.
-      tiles.forEach((t, i) => {
-        gsap.to(t, {
-          y: -6, duration: 3 + (i % 4) * 0.55, ease: 'sine.inOut',
-          repeat: -1, yoyo: true, delay: 1.2 + i * 0.22,
-        });
+      // Wide grids only: at two columns the offsets stop reading as ambient
+      // drift and start reading as a broken grid. Delayed past the reveal so
+      // the two animations don't both own y at once.
+      gsap.matchMedia().add('(min-width: 901px)', () => {
+        const floats = tiles.map((t, i) =>
+          gsap.to(t, {
+            y: -6, duration: 3 + (i % 4) * 0.55, ease: 'sine.inOut',
+            repeat: -1, yoyo: true, delay: 1.2 + i * 0.22,
+          })
+        );
+        // matchMedia reverts these automatically when the query stops matching,
+        // which also clears the inline y it left behind.
+        return () => floats.forEach((f) => f.kill());
       });
     }
 

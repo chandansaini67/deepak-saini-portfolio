@@ -145,12 +145,15 @@
     radius = n > 2 ? (w * 1.16) / 2 / Math.tan(Math.PI / n) : w * 0.9;
     radius = Math.max(radius, w * 0.9);
 
-    // Fourteen non-overlapping cards want a ~560px ring, which is wider than a
-    // phone. Rather than let the side cards run off the edge, squeeze the ring
-    // to fit: the cards then overlap into a fan, which still reads correctly
-    // because only the front two ever play anyway.
-    const fits = (window.innerWidth * 0.46) / Math.sin(Math.min(FACING_DEG, 80) * (Math.PI / 180));
-    radius = Math.min(radius, Math.max(fits, w * 0.9));
+    // Do NOT squeeze the ring to fit the screen. Fourteen cards want a ~590px
+    // circle; forcing that into 375px pushed neighbours closer together than
+    // they are wide, and the wall collapsed into a stack of overlapping
+    // slivers with no obvious front card.
+    //
+    // Keep the spacing honest and let the sides run past the edges instead —
+    // .stagewrap fades them out, so it reads as a carousel continuing offscreen,
+    // which is what a carousel should look like. Cap only guards absurd cases.
+    radius = Math.min(radius, window.innerWidth * 1.4);
 
     list.forEach((card, i) => {
       const angle = i * step;

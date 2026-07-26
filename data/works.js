@@ -2,9 +2,9 @@
 // Plain script, not JSON+fetch, so index.html still works opened straight from disk.
 window.WORKS = [
   {
-    "slug": "digibeez",
-    "title": "Digibeez",
-    "client": "digibeez.in",
+    "slug": "listing-promo",
+    "title": "Listing Promo",
+    "client": null,
     "category": "real-estate",
     "orientation": "vertical",
     "aspect": "9:16",
@@ -12,15 +12,15 @@ window.WORKS = [
     "height": 854,
     "duration": "00:44",
     "longForm": false,
-    "poster": "media/poster/digibeez.jpg",
-    "preview": "media/preview/digibeez.mp4",
-    "full": "media/full/digibeez.mp4"
+    "poster": "media/poster/listing-promo.jpg",
+    "preview": "media/preview/listing-promo.mp4",
+    "full": "media/full/listing-promo.mp4"
   },
   {
     "slug": "cafe-02",
     "title": "Brunch Table",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -32,9 +32,9 @@ window.WORKS = [
     "full": "media/full/cafe-02.mp4"
   },
   {
-    "slug": "karly-closedit",
-    "title": "Karly Closed It",
-    "client": "karly.closedit",
+    "slug": "agent-reel",
+    "title": "Agent Reel",
+    "client": null,
     "category": "real-estate",
     "orientation": "vertical",
     "aspect": "9:16",
@@ -42,15 +42,15 @@ window.WORKS = [
     "height": 854,
     "duration": "00:46",
     "longForm": false,
-    "poster": "media/poster/karly-closedit.jpg",
-    "preview": "media/preview/karly-closedit.mp4",
-    "full": "media/full/karly-closedit.mp4"
+    "poster": "media/poster/agent-reel.jpg",
+    "preview": "media/preview/agent-reel.mp4",
+    "full": "media/full/agent-reel.mp4"
   },
   {
     "slug": "cafe-06",
     "title": "Dining Room",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -62,9 +62,9 @@ window.WORKS = [
     "full": "media/full/cafe-06.mp4"
   },
   {
-    "slug": "reddoormedia",
-    "title": "Red Door Media",
-    "client": "reddoormedia.co",
+    "slug": "property-showcase",
+    "title": "Property Showcase",
+    "client": null,
     "category": "real-estate",
     "orientation": "vertical",
     "aspect": "9:16",
@@ -72,15 +72,15 @@ window.WORKS = [
     "height": 854,
     "duration": "00:41",
     "longForm": false,
-    "poster": "media/poster/reddoormedia.jpg",
-    "preview": "media/preview/reddoormedia.mp4",
-    "full": "media/full/reddoormedia.mp4"
+    "poster": "media/poster/property-showcase.jpg",
+    "preview": "media/preview/property-showcase.mp4",
+    "full": "media/full/property-showcase.mp4"
   },
   {
     "slug": "cafe-01",
     "title": "Corner Cafe",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -110,7 +110,7 @@ window.WORKS = [
     "slug": "cafe-04",
     "title": "Kitchen Pass",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -140,7 +140,7 @@ window.WORKS = [
     "slug": "cafe-03",
     "title": "Courtyard",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -170,7 +170,7 @@ window.WORKS = [
     "slug": "cafe-05",
     "title": "Bar Service",
     "client": null,
-    "category": "food-cafe",
+    "category": "local-business",
     "orientation": "vertical",
     "aspect": "9:16",
     "width": 480,
@@ -198,7 +198,7 @@ window.WORKS = [
   },
   {
     "slug": "estate-04",
-    "title": "Sobha Aranya",
+    "title": "Township Tour",
     "client": null,
     "category": "real-estate",
     "orientation": "vertical",

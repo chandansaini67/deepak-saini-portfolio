@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Deepak Saini — Video Editor</title>
-<meta name="description" content="Short-form video editor for creators, brands and businesses. Reels, property films and food content cut in Premiere Pro, DaVinci Resolve and After Effects.">
+<meta name="description" content="Short-form video editor for creators, brands and businesses. Reels, property films and food content cut in Premiere Pro, After Effects and Photoshop.">
 <meta name="theme-color" content="#0A0A0C">
 
 <meta property="og:type" content="website">
@@ -42,8 +42,10 @@
   <div class="timeline__track" id="timelineTrack">
     <button class="timeline__clip" data-target="hero"><span>HERO</span></button>
     <button class="timeline__clip" data-target="work"><span>WORK</span></button>
-    <button class="timeline__clip" data-target="tools"><span>TOOLS</span></button>
+    <button class="timeline__clip" data-target="about"><span>ABOUT</span></button>
+    <button class="timeline__clip" data-target="solutions"><span>SOLUTIONS</span></button>
     <button class="timeline__clip" data-target="process"><span>PROCESS</span></button>
+    <button class="timeline__clip" data-target="tools"><span>TOOLS</span></button>
     <button class="timeline__clip" data-target="contact"><span>CONTACT</span></button>
     <i class="timeline__head" id="timelineHead" aria-hidden="true"></i>
   </div>
@@ -78,7 +80,7 @@
       <p class="hero__line">I cut reels that people actually finish.</p>
       <p class="hero__sub">
         Short-form video for creators, brands and businesses — scripted hooks, tight pacing,
-        proper colour. Cut in Premiere&nbsp;Pro and DaVinci&nbsp;Resolve.
+        proper colour. Cut in Premiere&nbsp;Pro and After&nbsp;Effects.
       </p>
       <div class="hero__cta">
         <a class="btn btn--primary" href="https://wa.me/919350972226?text=Hi%20Deepak%2C%20I%20saw%20your%20portfolio%20and%20I%27d%20like%20to%20talk%20about%20a%20video." target="_blank" rel="noopener">
@@ -91,17 +93,20 @@
     <div class="hero__scroll" aria-hidden="true"><span></span>SCROLL</div>
   </section>
 
-  <!-- ── Clients ─────────────────────────────────────────────────────────── -->
+  <!-- ── Who I edit for ──────────────────────────────────────────────────────
+       Client names are deliberately absent. The work is presented by who it
+       was made for, not whose logo is on it. -->
   <section class="clients" id="clients">
-    <p class="clients__label">RECENT WORK FOR</p>
+    <p class="clients__label">WHO I EDIT FOR</p>
     <div class="marquee" id="marquee" aria-hidden="true">
       <div class="marquee__row" id="marqueeRow"></div>
     </div>
     <ul class="clients__list">
-      <li>digibeez.in</li>
-      <li>reddoormedia.co</li>
-      <li>karly.closedit</li>
-      <li class="clients__more">…and Instagram creators across niches</li>
+      <li>Instagram Creators</li>
+      <li>Real Estate Agents</li>
+      <li>Cafés &amp; Restaurants</li>
+      <li>Local Businesses</li>
+      <li>Personal Brands</li>
     </ul>
   </section>
 
@@ -119,7 +124,7 @@
       <div class="chips" role="tablist" aria-label="Filter work by category">
         <button class="chip is-on" role="tab" aria-selected="true" data-filter="all">All</button>
         <button class="chip" role="tab" aria-selected="false" data-filter="real-estate">Real Estate</button>
-        <button class="chip" role="tab" aria-selected="false" data-filter="food-cafe">Food &amp; Café</button>
+        <button class="chip" role="tab" aria-selected="false" data-filter="local-business">Local Business</button>
       </div>
       <button class="viewtoggle" id="viewToggle" aria-pressed="true">
         <span class="viewtoggle__icon" aria-hidden="true"></span>
@@ -129,43 +134,85 @@
 
     <p class="sr-only" role="status" aria-live="polite" id="workCount"></p>
 
-    <div class="stage is-cylinder" id="stage">
-      <div class="stage__3d" id="stage3d"><!-- reel cards injected by js/reelwall.js --></div>
+    <!-- The fade lives on a wrapper, never on .stage or .stage__3d: a mask on
+         either of those flattens the 3D rendering context and the ring goes
+         flat. Here it only softens the finished render at the edges. -->
+    <div class="stagewrap">
+      <div class="stage is-cylinder" id="stage">
+        <div class="stage__3d" id="stage3d"><!-- reel cards injected by js/reelwall.js --></div>
+      </div>
     </div>
 
     <p class="stage__hint" id="stageHint">Drag to spin · click a reel to watch</p>
   </section>
 
-  <!-- ── Tools ───────────────────────────────────────────────────────────── -->
-  <section class="section tools" id="tools">
+  <!-- ── About ───────────────────────────────────────────────────────────── -->
+  <section class="section about" id="about">
+    <div class="about__grid">
+      <div class="about__intro">
+        <p class="eyebrow" data-scramble>ABOUT</p>
+        <h2 class="h2">About<br>Deepak</h2>
+      </div>
+
+      <div class="about__lead">
+        <p>
+          Cuts, colour, storytelling. I'm <b>Deepak Saini</b>, a video editor who turns raw
+          footage into short-form that people actually watch to the end. I work in Adobe
+          Premiere&nbsp;Pro, After&nbsp;Effects and Photoshop, with an eye for pacing and the
+          small details that make an edit feel effortless.
+        </p>
+      </div>
+
+      <div class="about__body">
+        <p>
+          Most of what I do is short-form: reels for Instagram creators, property films for
+          agents, food and café content for local businesses. Every project starts the same
+          way — find the hook, cut everything that doesn't earn its place, then grade and mix
+          until it feels like one piece rather than a pile of clips.
+        </p>
+        <p>
+          I work directly with the people I edit for, so nothing gets lost in a handoff and
+          revisions don't turn into a queue. Send me the footage and you'll get back something
+          built to hold attention on a phone, where it's actually going to be watched.
+        </p>
+        <!-- Room for real numbers once Deepak has them — total views, client
+             count, years editing. Left out rather than invented. -->
+      </div>
+
+      <!-- Frames from his own reels, not a stock desk photo. -->
+      <div class="about__fan" aria-hidden="true">
+        <span class="about__frame"></span>
+        <span class="about__frame"></span>
+        <span class="about__frame"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Post-production solutions ───────────────────────────────────────── -->
+  <section class="section solutions" id="solutions">
     <div class="section__head">
-      <p class="eyebrow" data-scramble>TOOLBOX</p>
-      <h2 class="h2">Industry standard,<br>top to bottom.</h2>
-      <p class="lede">
-        The whole post pipeline in one pair of hands — cut, grade, motion, sound, delivery.
-        Nothing gets handed off and nothing gets lost between people.
-      </p>
+      <p class="eyebrow" data-scramble>POST-PRODUCTION</p>
+      <h2 class="h2">What usually goes<br>wrong, and how<br>I fix it.</h2>
     </div>
 
-    <div class="toolgrid" id="toolgrid">
-      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Pr</span><span class="tool__name">Premiere Pro</span></div>
-      <div class="tool tool--resolve" style="--tb:#161616;--tf:#F2F2F5">
-        <span class="tool__mark" aria-hidden="true">
-          <svg viewBox="0 0 40 40" width="34" height="34">
-            <circle cx="14" cy="14" r="7" fill="#FF4B4B" opacity=".85"/>
-            <circle cx="26" cy="14" r="7" fill="#35C8D8" opacity=".85"/>
-            <circle cx="20" cy="26" r="7" fill="#FFC64B" opacity=".85"/>
-          </svg>
-        </span>
-        <span class="tool__name">DaVinci Resolve</span>
+    <div class="solve">
+      <div class="solve__col solve__col--problem">
+        <h3 class="solve__h"><i class="solve__dot" aria-hidden="true"></i>Problems clients usually face</h3>
+        <ul class="solve__list">
+          <li>Poor lighting or uneven exposure in the raw footage.</li>
+          <li>Shaky clips, awkward framing, no visual consistency between shots.</li>
+          <li>Videos that feel slow, unengaging, or never quite make their point.</li>
+        </ul>
       </div>
-      <div class="tool" style="--tb:#001E36;--tf:#31A8FF"><span class="tool__mark">Ps</span><span class="tool__name">Photoshop</span></div>
-      <!-- TODO: confirm with Deepak which of the four below he actually works in,
-           and delete any he does not. An overstated tool list gets caught fast. -->
-      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Ae</span><span class="tool__name">After Effects</span></div>
-      <div class="tool" style="--tb:#330000;--tf:#FF9A00"><span class="tool__mark">Ai</span><span class="tool__name">Illustrator</span></div>
-      <div class="tool" style="--tb:#00005B;--tf:#00E4BB"><span class="tool__mark">Au</span><span class="tool__name">Audition</span></div>
-      <div class="tool" style="--tb:#001E36;--tf:#31A8FF"><span class="tool__mark">Lr</span><span class="tool__name">Lightroom</span></div>
+
+      <div class="solve__col solve__col--fix">
+        <h3 class="solve__h"><i class="solve__dot" aria-hidden="true"></i>How I handle them</h3>
+        <ul class="solve__list">
+          <li>Correct the lighting, colour and framing so it reads clean and deliberate.</li>
+          <li>Strip the distractions, smooth the transitions, tighten the pacing.</li>
+          <li>Shape the footage into a clear, sharp story that connects with the audience.</li>
+        </ul>
+      </div>
     </div>
   </section>
 
@@ -184,7 +231,7 @@
       <li class="step">
         <span class="step__n">02</span>
         <h3 class="step__h">Grade</h3>
-        <p class="step__p">Colour matched across every clip in Resolve, so a reel shot over three days looks like one shoot.</p>
+        <p class="step__p">Colour matched across every clip, so a reel shot over three days looks like one shoot.</p>
       </li>
       <li class="step">
         <span class="step__n">03</span>
@@ -202,6 +249,38 @@
         <p class="step__p">Exported for where it's going — 9:16 for Reels and Shorts, resized and reframed for anywhere else.</p>
       </li>
     </ol>
+  </section>
+
+  <!-- ── Softwares ───────────────────────────────────────────────────────── -->
+  <section class="section tools" id="tools">
+    <div class="section__head">
+      <p class="eyebrow" data-scramble>TOOLBOX</p>
+      <h2 class="h2">Softwares<br>I use.</h2>
+      <p class="lede">
+        Industry-standard tools — Adobe Premiere&nbsp;Pro, After&nbsp;Effects, Photoshop,
+        CapCut and Canva — alongside generative AI like ChatGPT, Gemini, Veo and Flow to
+        speed up the process and open up ideas that would otherwise take days. The point
+        isn't the software; it's finishing professional-quality video with real visual impact.
+      </p>
+    </div>
+
+    <div class="toolgrid" id="toolgrid">
+      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Pr</span><span class="tool__name">Premiere Pro</span></div>
+      <div class="tool" style="--tb:#00005B;--tf:#9999FF"><span class="tool__mark">Ae</span><span class="tool__name">After Effects</span></div>
+      <div class="tool" style="--tb:#001E36;--tf:#31A8FF"><span class="tool__mark">Ps</span><span class="tool__name">Photoshop</span></div>
+      <div class="tool" style="--tb:#101014;--tf:#F2F2F5"><span class="tool__mark">Cc</span><span class="tool__name">CapCut</span></div>
+      <div class="tool" style="--tb:#0B2B4A;--tf:#00C4CC"><span class="tool__mark">Cv</span><span class="tool__name">Canva</span></div>
+      <div class="tool" style="--tb:#1B1B21;--tf:#FF7A2F">
+        <span class="tool__mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/>
+            <path d="M18.5 15.5l.7 1.8 1.8.7-1.8.7-.7 1.8-.7-1.8-1.8-.7 1.8-.7z"/>
+          </svg>
+        </span>
+        <span class="tool__name">Generative AI</span>
+      </div>
+    </div>
   </section>
 
   <!-- ── Contact ─────────────────────────────────────────────────────────── -->

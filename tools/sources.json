@@ -1,71 +1,64 @@
 {
-  "_comment": "The 14 source videos, resolved from the two shared Google Drive folders owned by nikchhora@gmail.com. 'slug' becomes the filename for every derivative in media/. Array order IS the running order on the page. Re-run tools/fetch-drive.js then tools/encode.js after adding entries here.",
+  "_comment": "The 14 source videos from the two shared Google Drive folders. The Drive id is the authoritative link back to the original — the original filenames are deliberately not recorded here, because several of them were client names and this file is public. slug becomes the filename for every derivative in media/.",
   "_order": "Real estate and food/cafe are interleaved on purpose. Deepak edits across niches, so a visitor should see that range in the first four cards rather than scrolling past eight property reels first. Named clients still lead.",
   "_overrides": "Optional per-video: 'startAt' (seconds into the SOURCE where the 6s preview loop begins, overriding the automatic 18% rule) and 'posterAt' (seconds into the SOURCE to grab the poster from, overriding the automatic sharpest-frame pick). Delete the affected file from media/preview or media/poster, then re-run encode.js.",
   "folders": {
     "real-estate": "https://drive.google.com/drive/folders/1AW0sxX2TArz8yGVsBlDku26bcXsXCW0x",
-    "food-cafe": "https://drive.google.com/drive/folders/1j5iFbplWC3xp5DHOQJIztDJlENFIjhzS"
+    "local-business": "https://drive.google.com/drive/folders/1j5iFbplWC3xp5DHOQJIztDJlENFIjhzS"
   },
   "videos": [
     {
-      "slug": "digibeez",
+      "slug": "listing-promo",
       "id": "1JCJ1nTvgLKHjnXNkSJwAzsaKckl1o1Ui",
-      "source": "digibeez.in-20260723-0001.mp4",
       "bytes": 10188996,
       "category": "real-estate",
-      "client": "digibeez.in",
-      "title": "Digibeez"
+      "client": null,
+      "title": "Listing Promo"
     },
     {
       "slug": "cafe-02",
       "id": "11JFCEgU3H2qboekZwBlzK5O6raUYWUG4",
-      "source": "Food and cafe 2.mp4",
       "bytes": 1836805,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Brunch Table"
     },
     {
-      "slug": "karly-closedit",
+      "slug": "agent-reel",
       "id": "1lJU0W2VmOkI4i3b_uJeAAgxvEIiHxPvO",
-      "source": "karly.closedit-20260723-0001.mp4",
       "bytes": 13661222,
       "category": "real-estate",
-      "client": "karly.closedit",
-      "title": "Karly Closed It",
+      "client": null,
+      "title": "Agent Reel",
       "posterAt": 4.6
     },
     {
       "slug": "cafe-06",
       "id": "1yQfxcdn9w_IxK9yvU5n-7PNf4yslaiFd",
-      "source": "Food and cafe 6.mp4",
       "bytes": null,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Dining Room"
     },
     {
-      "slug": "reddoormedia",
+      "slug": "property-showcase",
       "id": "1HGH_2q5QXvS58QInWLNPTNv1ZNXbxZrq",
-      "source": "reddoormedia.co-20260723-0001.mp4",
       "bytes": null,
       "category": "real-estate",
-      "client": "reddoormedia.co",
-      "title": "Red Door Media"
+      "client": null,
+      "title": "Property Showcase"
     },
     {
       "slug": "cafe-01",
       "id": "1Frpp15IUYorDTH0KLcoiHcji6sczXY4u",
-      "source": "Food and cafee 1.mp4",
       "bytes": null,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Corner Cafe"
     },
     {
       "slug": "estate-01",
       "id": "1htqdcv607A8RQv80SjZ5Ur01E_hQVBvC",
-      "source": "Real e state 1.mp4",
       "bytes": 79856904,
       "category": "real-estate",
       "client": null,
@@ -74,16 +67,14 @@
     {
       "slug": "cafe-04",
       "id": "1gMSOLeSnVxv4hKqahCxwL4UwUxH5-DCV",
-      "source": "Food and cafe 4.mp4",
       "bytes": null,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Kitchen Pass"
     },
     {
       "slug": "estate-03",
       "id": "1uJKB_s_9_xYjzyR4chNW3Ocaux5Lk3Xl",
-      "source": "Real estate 3.mp4",
       "bytes": null,
       "category": "real-estate",
       "client": null,
@@ -92,16 +83,14 @@
     {
       "slug": "cafe-03",
       "id": "12q-KqA8yC2vkpNUBYCJUad7oKd8VHuyx",
-      "source": "Food and cafe 3.mp4",
       "bytes": 1448670,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Courtyard"
     },
     {
       "slug": "estate-05",
       "id": "1vpVTSaUrbW8tv51h1cn53A8Cbh3RCN5w",
-      "source": "Real e state 5",
       "bytes": 217377338,
       "category": "real-estate",
       "client": null,
@@ -110,9 +99,8 @@
     {
       "slug": "cafe-05",
       "id": "1FIk3m7r60bn3RxqTO7G9OF8p39O7usNe",
-      "source": "Food and cafe 5.mp4",
       "bytes": null,
-      "category": "food-cafe",
+      "category": "local-business",
       "client": null,
       "title": "Bar Service",
       "posterAt": 1.3
@@ -120,7 +108,6 @@
     {
       "slug": "estate-02",
       "id": "1vHW4nR8zKH-0KcszcMQLsYahHNVSGN-T",
-      "source": "Real e state 2.mp4",
       "bytes": null,
       "category": "real-estate",
       "client": null,
@@ -130,12 +117,13 @@
     {
       "slug": "estate-04",
       "id": "18bTrq9EDwSAg3zWDLBzP8rpV2DSSm4_5",
-      "source": "Real e state 4.mp4",
       "bytes": null,
       "category": "real-estate",
       "client": null,
-      "title": "Sobha Aranya",
+      "title": "Township Tour",
       "posterAt": 2.5
     }
-  ]
+  ],
+  "_clients": "Client names are deliberately not shown. The work is presented by category and craft, not by whose logo is on it.",
+  "_slugs": "Slugs are descriptive, never client names — the filename shows in the URL bar while a video plays."
 }
