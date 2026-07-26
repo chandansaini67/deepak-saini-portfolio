@@ -595,6 +595,7 @@ body.has-cursor .cursor { display: grid; place-items: center; }
   font: 700 19px/1 var(--f-display); letter-spacing: -.02em;
 }
 
+.tool--resolve .tool__mark { padding: 6px; }
 .tool__name { font: 500 14px/1.3 var(--f-body); color: var(--text); }
 
 /* ── About ──────────────────────────────────────────────────────────────── */
@@ -618,6 +619,23 @@ body.has-cursor .cursor { display: grid; place-items: center; }
 .about__lead b { color: var(--accent); font-weight: 600; }
 .about__body p { margin: 0 0 1.1rem; color: var(--muted); max-width: 62ch; }
 .about__body p:last-child { margin-bottom: 0; }
+
+.stats {
+  display: flex; flex-wrap: wrap; gap: clamp(1.5rem, 4vw, 3.5rem);
+  margin: 2rem 0 0; padding: 1.6rem 0 0;
+  list-style: none;
+  border-top: 1px solid var(--border);
+}
+.stat { display: flex; flex-direction: column; gap: .4rem; }
+.stat__n {
+  font: 800 clamp(2rem, 4.5vw, 3.2rem)/1 var(--f-display);
+  letter-spacing: -.04em; color: var(--accent);
+  font-variant-numeric: tabular-nums;   /* stops the count-up jittering */
+}
+.stat__l {
+  font: 500 10px/1.4 var(--f-mono);
+  letter-spacing: .2em; text-transform: uppercase; color: var(--muted);
+}
 
 /* Three of his own poster frames, angled. Real work instead of a stock desk. */
 .about__fan {

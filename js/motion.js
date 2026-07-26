@@ -260,9 +260,9 @@
       { t: 'Cafés & Restaurants', client: true },
       { t: 'Photoshop' },
       { t: 'Local Businesses', client: true },
-      { t: 'CapCut' },
+      { t: 'DaVinci Resolve' },
       { t: 'Personal Brands', client: true },
-      { t: 'Canva' },
+      { t: 'Generative AI' },
     ];
 
     const render = () =>
@@ -390,6 +390,28 @@
       { y: 30, opacity: 0, duration: 0.65, ease: 'power3.out', stagger: 0.12 },
       { trigger: '.solve', start: 'top 82%' });
   }
+
+  /* Stat counters. The markup already contains the final value, so if any of
+     this fails the numbers still read correctly — the animation only ever
+     counts up to what is already there. */
+  (function stats() {
+    const nums = qa('.stat__n[data-count]');
+    if (!nums.length || DS.reduced) return;
+
+    nums.forEach((el) => {
+      const target = Number(el.dataset.count);
+      const suffix = el.dataset.suffix || '';
+      const box = { v: 0 };
+      const tw = gsap.to(box, {
+        v: target, duration: 1.4, ease: 'power2.out',
+        onUpdate: () => { el.textContent = Math.round(box.v) + suffix; },
+        scrollTrigger: { trigger: '.stats', start: 'top 88%', once: true },
+      });
+      // Not via reveal(): these are never hidden, so the guard's rect check
+      // doesn't apply. If the trigger misses, the static value simply stays.
+      tw.eventCallback('onStart', () => { el.style.minWidth = el.offsetWidth + 'px'; });
+    });
+  })();
 
   /* The About fan uses his own poster frames, not a stock desk photo. Must run
      after `reveals` exists — it registers one. */
